@@ -1,0 +1,25 @@
+version: '3.6'
+
+services:
+  database:
+    container_name: alfawal-uav-postgres
+    image: postgres
+    user: postgres
+    env_file: ../.env
+    # No need to expose the port unless you want to access it from
+    # outside the Docker network
+    # ports:
+    #   - "5432:5432"
+  django:
+    container_name: alfawal-uav-django
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    env_file: ../.env
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ..:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
