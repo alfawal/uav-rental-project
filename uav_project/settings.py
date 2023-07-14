@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # Third-party apps
     "rest_framework",
     "rest_framework_simplejwt",
+    "django_filters",
     "corsheaders",
     # uav_project apps
     "uav_project",
