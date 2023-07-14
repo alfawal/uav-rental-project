@@ -1,4 +1,4 @@
-"""uav_rental URL Configuration.
+"""uav_project URL Configuration.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -15,15 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 
 The logic below is to automatically load all urls.py files from all apps
-that start with "uav_rental." prefix and add them to urlpatterns under
+that start with "uav_project." prefix and add them to urlpatterns under
 the specified parent_route prefix.
 
-e.g. uav_rental.orders.urls includes:
+e.g. uav_project.orders.urls includes:
 parent_route = None
 urlpatterns of (/all-orders/, /order/<id>/, etc.)
 they will be available under /all-orders/, /order/<id>/, etc.
 
-Where as uav_rental.users.urls includes:
+Where as uav_project.users.urls includes:
 parent_route = "users/"
 urlpatterns of (/login/, logout/, etc.)
 they will be available under /users/login/, /users/logout/, etc.
@@ -37,10 +37,12 @@ from django.contrib import admin
 from django.urls import include, path
 
 apps_urls = []
-# Iterate over all apps that start with "uav_rental." prefix.
+# Iterate over all apps that start with "uav_project." prefix.
 for app in (
     my_apps := tuple(
-        app for app in settings.INSTALLED_APPS if app.startswith("uav_rental.")
+        app
+        for app in settings.INSTALLED_APPS
+        if app.startswith("uav_project.")
     )
 ):
     with contextlib.suppress(ImportError):

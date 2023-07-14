@@ -4,8 +4,8 @@ from pathlib import Path
 import dj_database_url as dj_database_uri
 from corsheaders.defaults import default_headers
 
-from uav_rental.utils.envanter import env
-from uav_rental.utils.exceptions import EnvironmentVariableNotSet
+from uav_project.utils.envanter import env
+from uav_project.utils.exceptions import EnvironmentVariableNotSet
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,12 +43,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
-    # uav_rental apps
-    "uav_rental",
-    "uav_rental.user",
+    # uav_project apps
+    "uav_project",
+    "uav_project.user",
 ]
 
-AUTH_USER_MODEL = "uav_rental_user.UAVUser"
+AUTH_USER_MODEL = "uav_project_user.UAVUser"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -62,11 +62,11 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
 ]
 
-ROOT_URLCONF = "uav_rental.urls"
+ROOT_URLCONF = "uav_project.urls"
 
 # Rest Framework (DRF) settings
 REST_FRAMEWORK = {
-    "DEFAULT_PAGINATION_CLASS": "uav_rental.utils.helpers.PageSizeControllablePaginator",  # noqa: E501
+    "DEFAULT_PAGINATION_CLASS": "uav_project.utils.helpers.PageSizeControllablePaginator",  # noqa: E501
     "PAGE_SIZE": 10,
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -119,7 +119,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "uav_rental.wsgi.application"
+WSGI_APPLICATION = "uav_project.wsgi.application"
 
 
 # Database
