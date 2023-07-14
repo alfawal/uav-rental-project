@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   database:
-    container_name: alfawal-uav-postgres
+    container_name: alfawal-uav-project-postgres
     image: postgres
     user: postgres
     env_file: ../.env
@@ -11,7 +11,7 @@ services:
     # ports:
     #   - "5432:5432"
   django:
-    container_name: alfawal-uav-django
+    container_name: alfawal-uav-project-django
     build:
       context: ..
       dockerfile: docker/Dockerfile
