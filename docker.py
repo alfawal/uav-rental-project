@@ -5,12 +5,42 @@ import subprocess
 
 PROJECT_NAME = "alfawal-uav-project"
 COMPOSE_FILE = "./docker/docker-compose.yaml"
-CONTAINER_NAME = "alfawal-uav-project-django"
+CONTAINER_NAME = f"{PROJECT_NAME}-django"
 CYAN = "\033[96m"
 NC = "\033[0m"  # No color (aka. RESET)
 
 
-def docker_compose(*args) -> None:
+def run_command(command: str) -> None:
+    """Run a command in the shell.
+
+    Args:
+        command (str): Command to run.
+    """
+    print(f"{CYAN}Running the command:\n{command}{NC}")
+    try:
+        subprocess.run(command, shell=True)
+    except KeyboardInterrupt:
+        print(f"{CYAN}Interrupted the command:\n{command}{NC}")
+
+
+def docker_command(*args) -> None:
+    """Run a docker command with the specified arguments.
+
+    Args:
+        *args: Command line arguments to pass to docker.
+    """
+    command_parts = (
+        "docker",
+        "exec",
+        "-it",
+        CONTAINER_NAME,
+        *args,
+    )
+    full_command = " ".join(command_parts)
+    run_command(full_command)
+
+
+def docker_compose_command(*args) -> None:
     """Run a docker-compose command with the specified arguments.
 
     Args:
@@ -24,8 +54,8 @@ def docker_compose(*args) -> None:
         PROJECT_NAME,
         *args,
     )
-    print(f"{CYAN}Running: {' '.join(command_parts)}{NC}")
-    subprocess.run(command_parts)
+    full_command = " ".join(command_parts)
+    run_command(full_command)
 
 
 def manage_py(*args) -> None:
@@ -34,10 +64,10 @@ def manage_py(*args) -> None:
     Args:
         *args: Command line arguments to pass to manage.py.
     """
-    docker_compose("exec", CONTAINER_NAME, "python", "manage.py", *args)
+    docker_command("python", "manage.py", *args)
 
 
-def parse_arguments() -> argparse.Namespace:
+def get_parser() -> argparse.Namespace:
     """Parse command line arguments.
 
     Returns:
@@ -73,12 +103,6 @@ def parse_arguments() -> argparse.Namespace:
         action="store_true",
         help="Run in detached mode.",
     )
-    up_parser.add_argument(
-        "-m",
-        "--migrate",
-        action="store_true",
-        help="Run migrations after starting the containers.",
-    )
 
     subparsers.add_parser(
         "down",
@@ -94,38 +118,61 @@ def parse_arguments() -> argparse.Namespace:
     )
     subparsers.add_parser(
         "shell",
-        help="Open a shell in the Django container.",
+        help="Open the Django shell in the Django container.",
+    )
+    subparsers.add_parser(
+        "console",
+        help="Open a console in the Django container.",
+    )
+    subparsers.add_parser(
+        "makemigrations",
+        help="Make migrations.",
+    )
+    subparsers.add_parser(
+        "migrate",
+        help="Run migrations.",
     )
 
-    return parser.parse_args()
+    return parser
 
 
-def main() -> None:
+def main() -> int:
     """Parse arguments and execute the appropriate command."""
-    args = parse_arguments()
+    parser = get_parser()
+    args = parser.parse_args()
+    compose_command = args.compose_command
+    if compose_command is None:
+        print("No command specified.")
+        parser.print_help()
+        return 1
 
     if args.command:
         manage_py(*args.command)
-    elif args.compose_command == "build":
-        docker_compose("build")
-    elif args.compose_command == "up":
+    elif compose_command == "build":
+        docker_compose_command("build")
+    elif compose_command == "up":
         if args.detached:
-            docker_compose("up", "-d")
+            docker_compose_command("up", "-d")
         else:
-            docker_compose("up")
-
-        if args.migrate:
-            manage_py("migrate")
-    elif args.compose_command == "down":
-        docker_compose("down")
-    elif args.compose_command == "stop":
-        docker_compose("stop")
-    elif args.compose_command == "remove":
-        docker_compose("rm", "-f")
-    elif args.compose_command == "shell":
-        docker_compose("exec", CONTAINER_NAME, "bash")
+            docker_compose_command("up")
+    elif compose_command == "down":
+        docker_compose_command("down")
+    elif compose_command == "stop":
+        docker_compose_command("stop")
+    elif compose_command == "remove":
+        docker_compose_command("rm", "-f")
+    elif compose_command == "shell":
+        manage_py("shell")
+    elif compose_command == "console":
+        docker_command("sh")
+    elif compose_command == "makemigrations":
+        manage_py("makemigrations")
+    elif compose_command == "migrate":
+        manage_py("migrate")
     else:
-        print(f"Unknown command: {args.compose_command}")
+        print(f"Unknown command: {compose_command}")
+
+    return 0
 
 
 if __name__ == "__main__":

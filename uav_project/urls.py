@@ -35,6 +35,10 @@ import importlib
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 apps_urls = []
 # Iterate over all apps that start with "uav_project." prefix.
@@ -64,10 +68,17 @@ for app in (
                     path("", include(app_urls)),
                 )
 
+auth_urls = [
+    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+]
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    *apps_urls,
+    path(
+        "api/",
+        include(auth_urls + apps_urls),
+    ),
 ]
 
 if settings.ENABLE_BROWSABLE_API:

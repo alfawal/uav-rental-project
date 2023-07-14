@@ -12,6 +12,12 @@ services:
     #   - "5432:5432"
   django:
     container_name: alfawal-uav-project-django
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 60s
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -23,3 +29,4 @@ services:
       - "8000:8000"
     depends_on:
       - database
+    
