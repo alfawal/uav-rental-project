@@ -29,6 +29,7 @@ urlpatterns of (/login/, logout/, etc.)
 they will be available under /users/login/, /users/logout/, etc.
 """
 
+
 import contextlib
 import importlib
 
@@ -37,10 +38,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+from rest_framework import routers
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+
+main_router = routers.DefaultRouter()
 
 apps_urls = []
 # Iterate over all apps that start with "uav_project." prefix.
@@ -70,6 +74,18 @@ for app in (
                     path("", include(app_urls)),
                 )
 
+        if nested_routers := getattr(module, "nested_routers", None):
+            apps_urls.extend(
+                path(
+                    "",
+                    include(nested_router.urls),
+                )
+                for nested_router in nested_routers
+            )
+        if main_routers := getattr(module, "main_routers", None):
+            for router in main_routers:
+                main_router.registry.extend(router.registry)
+
 auth_urls = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
@@ -79,7 +95,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path(
         "api/",
-        include(auth_urls + apps_urls),
+        include(auth_urls + main_router.urls + apps_urls),
     ),
 ]
 

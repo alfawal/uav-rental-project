@@ -76,17 +76,34 @@ Refresh a token:
 }
 ```
 ### Users
-List the users (All if admin, only self if not):
+List the users:
 
 `GET` `http://localhost:8000/api/users/`
 
-- Ordering: `id`, `username` and `email`. `-` for descending order.
+- Permissions:
+    - Only authenticated users can access.
+    - Admins can access all users.
+    - Customers can access only themselves.
 
-- Filterset fields: `is_active`, `is_superuser`, `is_staff` and `is_customer`
+- Ordering fields (`-` for descending order):
+    - `id`
+    - `username`
+    - `email`
 
-Retrieve a user (All if admin, only self if not):
+- Filterset fields:
+    - `is_active`: boolean
+    - `is_superuser`: boolean
+    - `is_staff`: boolean
+    - `is_customer`: boolean
+
+Retrieve a user:
 
 `GET` `http://localhost:8000/api/users/{user_pk}`
+
+- Permissions:
+    - Only authenticated users can access.
+    - Admins can access all users.
+    - Users can access only themselves.
 
 
 ### UAVs
@@ -95,7 +112,14 @@ List the UAVs:
 
 `GET` `http://localhost:8000/api/uavs/`
 
-- Ordering: `created_at`, `updated_at`, `weight` and `daily_price`. `-` for descending order.
+- Permissions:
+    - Only authenticated users can access.
+
+- Ordering fields (`-` for descending order):
+    - `created_at`
+    - `updated_at`
+    - `weight`
+    - `daily_price`
 
 - Filterset fields:
     - `is_rented`: boolean
@@ -120,10 +144,19 @@ Retrieve a UAV:
 
 `GET` `http://localhost:8000/api/uavs/{uav_pk}`
 
-Create a UAV (Admin only):
+- Permissions:
+    - Only authenticated users can access.
+
+Create a UAV:
 
 `POST` `http://localhost:8000/api/uavs/`
 
+- Permissions:
+    - Only authenticated users can access.
+    - Only admins can create UAVs.
+
+- Example request body:
+
 ```json
 {
     "brand": "DJI",
@@ -139,10 +172,16 @@ Create a UAV (Admin only):
 }
 ```
 
-Update a UAV (Admin only):
+Update a UAV:
 
 `PUT` `http://localhost:8000/api/uavs/{uav_pk}`
 
+- Permissions:
+    - Only authenticated users can access.
+    - Only admins can update UAVs.
+
+- Example request body:
+
 ```json
 {
     "brand": "DJI",
@@ -158,26 +197,50 @@ Update a UAV (Admin only):
 }
 ```
 
-Delete a UAV (Admin only):
+Delete a UAV:
 
 `DELETE` `http://localhost:8000/api/uavs/{uav_pk}`
+
+- Permissions:
+    - Only authenticated users can access.
+    - Only admins can delete UAVs.
 
 ### Rentals
 
 List the rentals under a specific UAV/User (All if admin, only owned by self if not):
 
 `GET` `http://localhost:8000/api/uavs/{uav_pk}/rentals/`
+
 `GET` `http://localhost:8000/api/users/{user_pk}/rentals/`
 
-- Ordering: `created_at`, `updated_at`, `start_date` and `end_date`. `-` for descending order.
+- Permissions:
+    - Only authenticated users can access.
+    - Admins can access all rentals.
+    - Customers can access only their own rentals.
 
-Retrieve a rental (All if admin, only owned by self if not):
+- Ordering fields (`-` for descending order):
+    - `created_at`
+    - `updated_at`
+    - `start_date`
+    - `end_date`
+
+Retrieve a rental:
 
 `GET` `http://localhost:8000/api/uavs/{uav_pk}/rentals/{rental_pk}`
+
+- Permissions:
+    - Only authenticated users can access.
+    - Admins can access all rentals.
+    - Customers can access only their own rentals.
 
 Create a rental only authenticated users:
 
 `POST` `http://localhost:8000/api/uavs/{uav_pk}/rentals/`
+
+- Permissions:
+    - Only authenticated users can access.
+
+- Example request body:
 
 ```json
 {
@@ -190,6 +253,13 @@ Update a rental:
 
 `PUT` `http://localhost:8000/api/uavs/{uav_pk}/rentals/{rental_pk}`
 
+- Permissions:
+    - Only authenticated users can access.
+    - Admins can update all rentals.
+    - Customers can update only their own rentals.
+
+- Example request body:
+
 ```json
 {
     "start_date": "2021-01-01",
@@ -200,3 +270,8 @@ Update a rental:
 Delete a rental:
 
 `DELETE` `http://localhost:8000/api/uavs/{uav_pk}/rentals/{rental_pk}`
+
+- Permissions:
+    - Only authenticated users can access.
+    - Admins can delete all rentals.
+    - Customers can delete only their own rentals.
