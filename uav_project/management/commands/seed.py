@@ -1,20 +1,19 @@
 # myapp/management/commands/seed.py
-from django.core.management.base import BaseCommand
-
 import os
-import requests
-from PIL import Image
-from io import BytesIO
-from django.core.files import File
-from django.core.files.temp import NamedTemporaryFile
 from datetime import timedelta
+from io import BytesIO
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
+
+import requests
+from PIL import Image
 
 
 @transaction.atomic
