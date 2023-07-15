@@ -105,6 +105,14 @@ Retrieve a user:
     - Admins can access all users.
     - Users can access only themselves.
 
+Retrieve the current logged in user:
+
+This endpoint is used to retrieve the current logged in user. Usually, the frontend will use this endpoint to retrieve the user's information and display specific sections/pages based on the user's role.
+
+`GET` `http://localhost:8000/api/users/me/`
+
+- Permissions:
+    - Only authenticated users can access.
 
 ### UAVs
 

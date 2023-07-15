@@ -2,8 +2,10 @@ from django.contrib.auth import get_user_model
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.response import Response
+from rest_framework import status
 from uav_project.user.serializers import UserSerializer
 
 
@@ -43,3 +45,15 @@ class UserViewSet(
             return qs
 
         return super().get_queryset().filter(id=self.request.user.id)
+
+    @action(
+        detail=False,
+        methods=("get",),
+        permission_classes=(IsAuthenticated,),
+        url_path="me",
+        url_name="users-me",
+    )
+    def me(self, request) -> Response:
+        """Return the current logged in user details."""
+        serializer = self.get_serializer(request.user)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
