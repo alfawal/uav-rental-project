@@ -33,8 +33,10 @@ import contextlib
 import importlib
 
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -80,6 +82,13 @@ urlpatterns = [
         include(auth_urls + apps_urls),
     ),
 ]
+
+if settings.DEBUG:
+    # Serve media files in development.
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    )
 
 if settings.ENABLE_BROWSABLE_API:
     urlpatterns.append(

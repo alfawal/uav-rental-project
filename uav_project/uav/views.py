@@ -1,14 +1,20 @@
-from rest_framework import viewsets, mixins, filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, viewsets
+
 from uav_project.uav.filters import UAVFilterSet
 from uav_project.uav.models import UAVModel
+from uav_project.uav.serializers import UAVSerializer
+from uav_project.utils.permissions import UAVPermissionMixin
 
 
-class UAVListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """UAVs listing viewset."""
+class UAVViewSet(
+    viewsets.ModelViewSet,
+    UAVPermissionMixin,
+):
+    """UAV's viewset."""
 
     queryset = UAVModel.objects.all()
-    serializer_class = ...  # TODO: Add serializer class
+    serializer_class = UAVSerializer
     filter_backends = (
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -24,6 +30,9 @@ class UAVListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         "created_at",
         "updated_at",
         "weight",
-        "price",
+        "daily_price",
     )
-    ordering = ("-created_at", "-updated_at")
+    ordering = (
+        "-created_at",
+        "-updated_at",
+    )

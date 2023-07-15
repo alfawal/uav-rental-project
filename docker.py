@@ -132,6 +132,10 @@ def get_parser() -> argparse.Namespace:
         "migrate",
         help="Run migrations.",
     )
+    subparsers.add_parser(
+        "seed",
+        help="Seed the database with initial data.",
+    )
 
     return parser
 
@@ -141,7 +145,7 @@ def main() -> int:
     parser = get_parser()
     args = parser.parse_args()
     compose_command = args.compose_command
-    if compose_command is None:
+    if compose_command is None and args.command is None:
         print("No command specified.")
         parser.print_help()
         return 1
@@ -169,6 +173,8 @@ def main() -> int:
         manage_py("makemigrations")
     elif compose_command == "migrate":
         manage_py("migrate")
+    elif compose_command == "seed":
+        manage_py("seed")
     else:
         print(f"Unknown command: {compose_command}")
 

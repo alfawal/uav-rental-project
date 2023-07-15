@@ -24,33 +24,43 @@ class UAVUser(AbstractUser):
         help_text=_("Designates whether the user is a customer."),
     )
 
+    class Meta:
+        """Meta definition for UAVUser."""
+
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
+
     def clean(self) -> None:
         """Validates the role of the user.
 
+        A user can have multiple admin roles (e.g. is_staff and is_superuser)
+        but cannot have both admin and customer roles at the same time.
+
         Raises:
-            ValidationError: If the user has more than one role or
-                no role at all.
+            ValidationError: If the user has no role or has administrative
+                and customer roles at the same time.
 
         Returns:
             None
         """
-        # Count how many roles are set to True.
-        # NOTE: True is 1 and False is 0 in Python.
-        true_roles_count = sum(
-            (
-                self.is_staff,
-                self.is_customer,
-                self.is_superuser,
-            )
+        admin_roles = (
+            self.is_staff,
+            self.is_superuser,
         )
+        customer_roles = (self.is_customer,)
+        all_roles = admin_roles + customer_roles
 
-        if true_roles_count > 1:
-            raise ValidationError("The user can only have one role at a time.")
-
-        if true_roles_count == 0:
+        has_no_role = not any(all_roles)
+        if has_no_role:
             raise ValidationError("The user must have at least one role.")
+
+        is_admin_and_customer = any(admin_roles) and any(customer_roles)
+        if is_admin_and_customer:
+            raise ValidationError(
+                "The user cannot be an admin and a customer."
+            )
 
     def save(self, *args, **kwargs) -> None:
         """Validates the user before saving."""
-        self.full_clean()
+        # self.full_clean()
         super().save(*args, **kwargs)

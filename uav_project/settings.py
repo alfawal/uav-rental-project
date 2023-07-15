@@ -44,9 +44,12 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "django_filters",
     "corsheaders",
+    "django_json_widget",
     # uav_project apps
     "uav_project",
     "uav_project.user",
+    "uav_project.uav",
+    "uav_project.rental",
 ]
 
 AUTH_USER_MODEL = "uav_project_user.UAVUser"
@@ -55,7 +58,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -72,7 +75,14 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
+    "DEFAULT_PARSER_CLASSES": (
+        "rest_framework.parsers.JSONParser",
+        "rest_framework.parsers.MultiPartParser",
+    ),
 }
 
 # Enabling and disabling the browsable API interface dynamically for
@@ -102,6 +112,9 @@ CORS_ALLOW_HEADERS = env.list(
         "x-timezone",
     ),
 )
+
+MEDIA_ROOT = env.str("MEDIA_ROOT", "/app/tmp/media/")
+MEDIA_URL = env.str("MEDIA_URL", "/media/")
 
 
 TEMPLATES = [

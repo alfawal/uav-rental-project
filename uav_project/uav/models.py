@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
 from uav_project.uav.managers import UAVModelManager
 from uav_project.utils.models import TimestampedModel
 
@@ -32,7 +33,7 @@ class UAVModel(TimestampedModel):
         null=True,
         help_text=_("A very detailed description of the UAV."),
     )
-    price = models.DecimalField(
+    daily_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
     )
@@ -60,4 +61,7 @@ class UAVModel(TimestampedModel):
 
     def __str__(self):
         """Unicode representation of UAV."""
-        return f"{self.brand} {self.model} - {self.weight}kg | {self.price}"
+        return (
+            f"{self.brand} {self.model} - {self.weight}kg"
+            f" | {self.daily_price}"
+        )

@@ -1,11 +1,15 @@
-import django_filters
-from uav_project.uav.models import UAVModel
 from django.db import models
+
+import django_filters
+
+from uav_project.uav.models import UAVModel
 
 
 class UAVFilterSet(django_filters.FilterSet):
-    is_rented = django_filters.BooleanFilter(method="filter_by_rented")
-    price = django_filters.RangeFilter()
+    is_rented = django_filters.BooleanFilter(
+        field_name="is_rented", label="Is rented?", method="filter_by_rented"
+    )
+    daily_price = django_filters.RangeFilter()
     weight = django_filters.RangeFilter()
     created_at = django_filters.DateTimeFromToRangeFilter()
     updated_at = django_filters.DateTimeFromToRangeFilter()
@@ -19,7 +23,7 @@ class UAVFilterSet(django_filters.FilterSet):
             "weight",
             "category",
             "description",
-            "price",
+            "daily_price",
             "created_at",
             "updated_at",
         )
