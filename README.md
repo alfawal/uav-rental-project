@@ -26,7 +26,7 @@ python3 docker.py build
 
 5. Run it
 ```bash
-python3 docker.py run
+python3 docker.py up
 ```
 
 6. Run the migrations
