@@ -9,7 +9,7 @@ class RentalViewSet(viewsets.ModelViewSet):
     API endpoint that allows rentals to be viewed or edited.
     """
 
-    queryset = Rental.objects.all().prefetch_related("uav", "user")
+    queryset = Rental.objects.all().select_related("uav", "user")
     serializer_class = RentalSerializer
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = (

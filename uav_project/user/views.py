@@ -46,6 +46,12 @@ class UserViewSet(
 
         return super().get_queryset().filter(id=self.request.user.id)
 
+    def list(self, request, *args, **kwargs) -> Response:
+        """Adds a total_count field to the response."""
+        list_response = super().list(request, *args, **kwargs)
+        list_response.data["total_count"] = self.get_queryset().count()
+        return list_response
+
     @action(
         detail=False,
         methods=("get",),
